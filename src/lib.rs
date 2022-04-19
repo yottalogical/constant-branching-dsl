@@ -68,12 +68,16 @@ impl Exp {
                 _ => None,
             },
             Exp::If(e1, e2, e3) => {
-                if let Some(Exp::Bool(b)) = e1.evaluate() {
-                    if b {
-                        e2.evaluate()
-                    } else {
-                        e3.evaluate()
-                    }
+                if let (Some(Exp::Bool(b)), Some(Exp::Num(n2)), Some(Exp::Num(n3))) =
+                    (e1.evaluate(), e2.evaluate(), e3.evaluate())
+                {
+                    let mask_for_n2 = -(b as i128);
+                    let mask_for_n3 = b as i128 - 1;
+
+                    let masked_n2 = mask_for_n2 & n2;
+                    let masked_n3 = mask_for_n3 & n3;
+
+                    Some(Exp::Num(masked_n2 | masked_n3))
                 } else {
                     None
                 }
