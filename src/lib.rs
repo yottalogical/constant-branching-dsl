@@ -60,7 +60,7 @@ impl Exp {
                 },
                 (Some(Exp::Fun(_, x, body)), Some(e2)) => {
                     if let BinOp::Ap = op {
-                        Some(body.substitute(&e2, &x))
+                        body.substitute(&e2, &x).evaluate()
                     } else {
                         None
                     }

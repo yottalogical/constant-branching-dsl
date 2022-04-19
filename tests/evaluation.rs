@@ -102,11 +102,19 @@ fn test_ap() {
     assert_eq!(
         Exp::BinOp(
             BinOp::Ap,
-            Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("x")))),
+            Rc::new(Exp::Fun(
+                None,
+                "x",
+                Rc::new(Exp::BinOp(
+                    BinOp::Plus,
+                    Rc::new(Exp::Var("x")),
+                    Rc::new(Exp::Num(1)),
+                ))
+            )),
             Rc::new(Exp::Num(123))
         )
         .evaluate(),
-        Some(Exp::Num(123))
+        Some(Exp::Num(124))
     );
 }
 
