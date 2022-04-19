@@ -31,10 +31,10 @@ pub enum Exp {
     UnOp(UnOp, Rc<Exp>),
     BinOp(BinOp, Rc<Exp>, Rc<Exp>),
     If(Rc<Exp>, Rc<Exp>, Rc<Exp>),
-    Var(Rc<String>),
-    Let(Option<Typ>, Rc<Exp>, Rc<String>, Rc<Exp>),
-    Fun(Option<Typ>, Rc<String>, Rc<Exp>),
-    Fix(Option<Typ>, Rc<String>, Rc<Exp>),
+    Var(&'static str),
+    Let(Option<Typ>, Rc<Exp>, &'static str, Rc<Exp>),
+    Fun(Option<Typ>, &'static str, Rc<Exp>),
+    Fix(Option<Typ>, &'static str, Rc<Exp>),
     Triv,
 }
 
@@ -89,7 +89,7 @@ impl Exp {
         }
     }
 
-    fn substitute(&self, sub: &Exp, x: &Rc<String>) -> Exp {
+    fn substitute(&self, sub: &Exp, x: &str) -> Exp {
         match self {
             Exp::UnOp(op, e1) => Exp::UnOp(op.clone(), Rc::new(e1.substitute(sub, x))),
             Exp::BinOp(op, e1, e2) => Exp::BinOp(
@@ -103,14 +103,14 @@ impl Exp {
                 Rc::new(e3.substitute(sub, x)),
             ),
             Exp::Var(x1) => {
-                if x1 == x {
+                if *x1 == x {
                     sub.clone()
                 } else {
                     self.clone()
                 }
             }
             Exp::Let(t, e1, x1, e2) => {
-                if x1 == x {
+                if *x1 == x {
                     self.clone()
                 } else {
                     Exp::Let(
@@ -122,14 +122,14 @@ impl Exp {
                 }
             }
             Exp::Fun(t, x1, e1) => {
-                if x1 == x {
+                if *x1 == x {
                     self.clone()
                 } else {
                     Exp::Fun(t.clone(), x1.clone(), Rc::new(e1.substitute(sub, x)))
                 }
             }
             Exp::Fix(t, x1, e1) => {
-                if x1 == x {
+                if *x1 == x {
                     self.clone()
                 } else {
                     Exp::Fix(t.clone(), x1.clone(), Rc::new(e1.substitute(sub, x)))

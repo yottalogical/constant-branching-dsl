@@ -102,11 +102,7 @@ fn test_ap() {
     assert_eq!(
         Exp::BinOp(
             BinOp::Ap,
-            Rc::new(Exp::Fun(
-                None,
-                Rc::new(String::from("x")),
-                Rc::new(Exp::Var(Rc::new(String::from("x"))))
-            )),
+            Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("x")))),
             Rc::new(Exp::Num(123))
         )
         .evaluate(),
@@ -142,19 +138,13 @@ fn test_if_false() {
 
 #[test]
 fn test_var() {
-    assert_eq!(Exp::Var(Rc::new(String::from("x"))).evaluate(), None);
+    assert_eq!(Exp::Var("x").evaluate(), None);
 }
 
 #[test]
 fn test_let() {
     assert_eq!(
-        Exp::Let(
-            None,
-            Rc::new(Exp::Num(123)),
-            Rc::new(String::from("x")),
-            Rc::new(Exp::Var(Rc::new(String::from("x"))))
-        )
-        .evaluate(),
+        Exp::Let(None, Rc::new(Exp::Num(123)), "x", Rc::new(Exp::Var("x"))).evaluate(),
         Some(Exp::Num(123))
     );
 }
@@ -162,17 +152,8 @@ fn test_let() {
 #[test]
 fn test_fun() {
     assert_eq!(
-        Exp::Fun(
-            None,
-            Rc::new(String::from("x")),
-            Rc::new(Exp::Var(Rc::new(String::from("x"))))
-        )
-        .evaluate(),
-        Some(Exp::Fun(
-            None,
-            Rc::new(String::from("x")),
-            Rc::new(Exp::Var(Rc::new(String::from("x"))))
-        ))
+        Exp::Fun(None, "x", Rc::new(Exp::Var("x"))).evaluate(),
+        Some(Exp::Fun(None, "x", Rc::new(Exp::Var("x"))))
     );
 }
 
@@ -181,25 +162,17 @@ fn test_fix() {
     assert_eq!(
         Exp::Fix(
             None,
-            Rc::new(String::from("f")),
-            Rc::new(Exp::Fun(
-                None,
-                Rc::new(String::from("x")),
-                Rc::new(Exp::Var(Rc::new(String::from("f"))))
-            ))
+            "f",
+            Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f"))))
         )
         .evaluate(),
         Some(Exp::Fun(
             None,
-            Rc::new(String::from("x")),
+            "x",
             Rc::new(Exp::Fix(
                 None,
-                Rc::new(String::from("f")),
-                Rc::new(Exp::Fun(
-                    None,
-                    Rc::new(String::from("x")),
-                    Rc::new(Exp::Var(Rc::new(String::from("f"))))
-                ))
+                "f",
+                Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f"))))
             ))
         ))
     );
