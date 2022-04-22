@@ -60,7 +60,7 @@ impl Exp {
                 },
                 (Some(Exp::Fun(_, x, body)), Some(e2)) => {
                     if let BinOp::Ap = op {
-                        body.substitute(&e2, &x).evaluate()
+                        body.substitute(&e2, x).evaluate()
                     } else {
                         None
                     }
@@ -116,7 +116,7 @@ impl Exp {
                     Exp::Let(
                         t.clone(),
                         Rc::new(e1.substitute(sub, x)),
-                        x1.clone(),
+                        x1,
                         Rc::new(e2.substitute(sub, x)),
                     )
                 }
@@ -125,14 +125,14 @@ impl Exp {
                 if *x1 == x {
                     self.clone()
                 } else {
-                    Exp::Fun(t.clone(), x1.clone(), Rc::new(e1.substitute(sub, x)))
+                    Exp::Fun(t.clone(), x1, Rc::new(e1.substitute(sub, x)))
                 }
             }
             Exp::Fix(t, x1, e1) => {
                 if *x1 == x {
                     self.clone()
                 } else {
-                    Exp::Fix(t.clone(), x1.clone(), Rc::new(e1.substitute(sub, x)))
+                    Exp::Fix(t.clone(), x1, Rc::new(e1.substitute(sub, x)))
                 }
             }
             Exp::Num(_) | Exp::Bool(_) | Exp::Triv => self.clone(),
