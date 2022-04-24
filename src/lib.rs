@@ -40,13 +40,13 @@ pub enum Exp {
 }
 
 impl Exp {
-    pub fn evaluate(&self) -> Result<Exp, ()> {
+    pub fn evaluate(&self) -> Result<Exp, &'static str> {
         let (result, valid) = self.private_evaluate();
 
         if valid {
             Ok(result)
         } else {
-            Err(())
+            Err("Evaluation error")
         }
     }
 
