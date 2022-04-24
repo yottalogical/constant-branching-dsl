@@ -172,9 +172,11 @@ fn test_if_false() {
 }
 
 #[test]
-#[should_panic(expected = "Cannot evaluate a raw variable")]
 fn test_var() {
-    Exp::Var("x").evaluate().unwrap();
+    assert_eq!(
+        Exp::Var("x").evaluate().unwrap_err(),
+        EvaluationErr::UnassignedVar
+    );
 }
 
 #[test]
