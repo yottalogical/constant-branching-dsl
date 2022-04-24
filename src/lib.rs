@@ -83,8 +83,8 @@ impl Exp {
                 }
             }
             Exp::Var(_) => Err("Cannot evaluate a raw variable"),
-            Exp::Let(_, e1, x, e2) => Ok(e2.substitute(e1, x)),
-            Exp::Fix(_, x, e1) => Ok(e1.substitute(self, x)),
+            Exp::Let(_, e1, x, e2) => e2.substitute(e1, x).evaluate(),
+            Exp::Fix(_, x, e1) => e1.substitute(self, x).evaluate(),
             Exp::Num(_) | Exp::Bool(_) | Exp::Fun(_, _, _) | Exp::Triv => Ok(self.clone()),
         }
     }
