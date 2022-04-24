@@ -39,37 +39,37 @@ pub enum Exp {
 }
 
 impl Exp {
-    pub fn evaluate(&self) -> Option<Exp> {
+    pub fn evaluate(&self) -> Result<Exp, &'static str> {
         match self {
             Exp::UnOp(UnOp::Neg, e) => {
-                if let Some(Exp::Num(n)) = e.evaluate() {
-                    Some(Exp::Num(-n))
+                if let Ok(Exp::Num(n)) = e.evaluate() {
+                    Ok(Exp::Num(-n))
                 } else {
-                    None
+                    Err("Can only negate a number")
                 }
             }
-            Exp::BinOp(op, e1, e2) => match (e1.evaluate(), e2.evaluate()) {
-                (Some(Exp::Num(n1)), Some(Exp::Num(n2))) => match op {
-                    BinOp::Lt => Some(Exp::Bool(n1 < n2)),
-                    BinOp::Gt => Some(Exp::Bool(n1 > n2)),
-                    BinOp::Eq => Some(Exp::Bool(n1 == n2)),
-                    BinOp::Plus => Some(Exp::Num(n1 + n2)),
-                    BinOp::Minus => Some(Exp::Num(n1 - n2)),
-                    BinOp::Times => Some(Exp::Num(n1 * n2)),
-                    BinOp::Ap => None,
+            Exp::BinOp(op, e1, e2) => match (e1.evaluate()?, e2.evaluate()?) {
+                (Exp::Num(n1), Exp::Num(n2)) => match op {
+                    BinOp::Lt => Ok(Exp::Bool(n1 < n2)),
+                    BinOp::Gt => Ok(Exp::Bool(n1 > n2)),
+                    BinOp::Eq => Ok(Exp::Bool(n1 == n2)),
+                    BinOp::Plus => Ok(Exp::Num(n1 + n2)),
+                    BinOp::Minus => Ok(Exp::Num(n1 - n2)),
+                    BinOp::Times => Ok(Exp::Num(n1 * n2)),
+                    BinOp::Ap => Err("Cannot apply a number"),
                 },
-                (Some(Exp::Fun(_, x, body)), Some(e2)) => {
+                (Exp::Fun(_, x, body), e2) => {
                     if let BinOp::Ap = op {
                         body.substitute(&e2, x).evaluate()
                     } else {
-                        None
+                        Err("Can only apply a function")
                     }
                 }
-                _ => None,
+                _ => Err("Invalid BinOp"),
             },
             Exp::If(e1, e2, e3) => {
-                if let (Some(Exp::Bool(b)), Some(Exp::Num(n2)), Some(Exp::Num(n3))) =
-                    (e1.evaluate(), e2.evaluate(), e3.evaluate())
+                if let (Exp::Bool(b), Exp::Num(n2), Exp::Num(n3)) =
+                    (e1.evaluate()?, e2.evaluate()?, e3.evaluate()?)
                 {
                     let mask_for_n2 = -(b as i128);
                     let mask_for_n3 = b as i128 - 1;
@@ -77,15 +77,15 @@ impl Exp {
                     let masked_n2 = mask_for_n2 & n2;
                     let masked_n3 = mask_for_n3 & n3;
 
-                    Some(Exp::Num(masked_n2 | masked_n3))
+                    Ok(Exp::Num(masked_n2 | masked_n3))
                 } else {
-                    None
+                    Err("Can only if on a boolean and two nums")
                 }
             }
-            Exp::Var(_) => None,
-            Exp::Let(_, e1, x, e2) => Some(e2.substitute(e1, x)),
-            Exp::Fix(_, x, e1) => Some(e1.substitute(self, x)),
-            Exp::Num(_) | Exp::Bool(_) | Exp::Fun(_, _, _) | Exp::Triv => Some(self.clone()),
+            Exp::Var(_) => Err("Cannot evaluate a raw variable"),
+            Exp::Let(_, e1, x, e2) => Ok(e2.substitute(e1, x)),
+            Exp::Fix(_, x, e1) => Ok(e1.substitute(self, x)),
+            Exp::Num(_) | Exp::Bool(_) | Exp::Fun(_, _, _) | Exp::Triv => Ok(self.clone()),
         }
     }
 

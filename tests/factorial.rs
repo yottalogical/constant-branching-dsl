@@ -42,8 +42,10 @@ fn test_factorial(n: i128) {
     );
 
     assert_eq!(
-        Exp::BinOp(BinOp::Ap, Rc::new(factorial_exp), Rc::new(Exp::Num(n))).evaluate(),
-        Some(Exp::Num(factorial(n).unwrap()))
+        Exp::BinOp(BinOp::Ap, Rc::new(factorial_exp), Rc::new(Exp::Num(n)))
+            .evaluate()
+            .unwrap(),
+        Exp::Num(factorial(n).unwrap())
     );
 }
 

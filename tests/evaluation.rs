@@ -3,97 +3,121 @@ use std::rc::Rc;
 
 #[test]
 fn test_num() {
-    assert_eq!(Exp::Num(123).evaluate(), Some(Exp::Num(123)));
+    assert_eq!(Exp::Num(123).evaluate().unwrap(), Exp::Num(123));
 }
 
 #[test]
 fn test_true() {
-    assert_eq!(Exp::Bool(true).evaluate(), Some(Exp::Bool(true)));
+    assert_eq!(Exp::Bool(true).evaluate().unwrap(), Exp::Bool(true));
 }
 
 #[test]
 fn test_false() {
-    assert_eq!(Exp::Bool(false).evaluate(), Some(Exp::Bool(false)));
+    assert_eq!(Exp::Bool(false).evaluate().unwrap(), Exp::Bool(false));
 }
 
 #[test]
 fn test_neg() {
     assert_eq!(
-        Exp::UnOp(UnOp::Neg, Rc::new(Exp::Num(123))).evaluate(),
-        Some(Exp::Num(-123))
+        Exp::UnOp(UnOp::Neg, Rc::new(Exp::Num(123)))
+            .evaluate()
+            .unwrap(),
+        Exp::Num(-123)
     );
 }
 
 #[test]
 fn test_lt() {
     assert_eq!(
-        Exp::BinOp(BinOp::Lt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234))).evaluate(),
-        Some(Exp::Bool(true))
+        Exp::BinOp(BinOp::Lt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(true)
     );
 
     assert_eq!(
-        Exp::BinOp(BinOp::Lt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(123))).evaluate(),
-        Some(Exp::Bool(false))
+        Exp::BinOp(BinOp::Lt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(123)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(false)
     );
 
     assert_eq!(
-        Exp::BinOp(BinOp::Lt, Rc::new(Exp::Num(234)), Rc::new(Exp::Num(123))).evaluate(),
-        Some(Exp::Bool(false))
+        Exp::BinOp(BinOp::Lt, Rc::new(Exp::Num(234)), Rc::new(Exp::Num(123)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(false)
     );
 }
 
 #[test]
 fn test_gt() {
     assert_eq!(
-        Exp::BinOp(BinOp::Gt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234))).evaluate(),
-        Some(Exp::Bool(false))
+        Exp::BinOp(BinOp::Gt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(false)
     );
 
     assert_eq!(
-        Exp::BinOp(BinOp::Gt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(123))).evaluate(),
-        Some(Exp::Bool(false))
+        Exp::BinOp(BinOp::Gt, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(123)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(false)
     );
 
     assert_eq!(
-        Exp::BinOp(BinOp::Gt, Rc::new(Exp::Num(234)), Rc::new(Exp::Num(123))).evaluate(),
-        Some(Exp::Bool(true))
+        Exp::BinOp(BinOp::Gt, Rc::new(Exp::Num(234)), Rc::new(Exp::Num(123)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(true)
     );
 }
 
 #[test]
 fn test_eq() {
     assert_eq!(
-        Exp::BinOp(BinOp::Eq, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234))).evaluate(),
-        Some(Exp::Bool(false))
+        Exp::BinOp(BinOp::Eq, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(false)
     );
 
     assert_eq!(
-        Exp::BinOp(BinOp::Eq, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(123))).evaluate(),
-        Some(Exp::Bool(true))
+        Exp::BinOp(BinOp::Eq, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(123)))
+            .evaluate()
+            .unwrap(),
+        Exp::Bool(true)
     );
 }
 
 #[test]
 fn test_plus() {
     assert_eq!(
-        Exp::BinOp(BinOp::Plus, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234))).evaluate(),
-        Some(Exp::Num(123 + 234))
+        Exp::BinOp(BinOp::Plus, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234)))
+            .evaluate()
+            .unwrap(),
+        Exp::Num(123 + 234)
     );
 }
 
 #[test]
 fn test_minus() {
     assert_eq!(
-        Exp::BinOp(BinOp::Minus, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234))).evaluate(),
-        Some(Exp::Num(123 - 234))
+        Exp::BinOp(BinOp::Minus, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234)))
+            .evaluate()
+            .unwrap(),
+        Exp::Num(123 - 234)
     );
 }
 
 #[test]
 fn test_times() {
     assert_eq!(
-        Exp::BinOp(BinOp::Times, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234))).evaluate(),
-        Some(Exp::Num(123 * 234))
+        Exp::BinOp(BinOp::Times, Rc::new(Exp::Num(123)), Rc::new(Exp::Num(234)))
+            .evaluate()
+            .unwrap(),
+        Exp::Num(123 * 234)
     );
 }
 
@@ -113,8 +137,9 @@ fn test_ap() {
             )),
             Rc::new(Exp::Num(123))
         )
-        .evaluate(),
-        Some(Exp::Num(124))
+        .evaluate()
+        .unwrap(),
+        Exp::Num(124)
     );
 }
 
@@ -126,8 +151,9 @@ fn test_if_true() {
             Rc::new(Exp::Num(123)),
             Rc::new(Exp::Num(234))
         )
-        .evaluate(),
-        Some(Exp::Num(123))
+        .evaluate()
+        .unwrap(),
+        Exp::Num(123)
     );
 }
 
@@ -139,29 +165,35 @@ fn test_if_false() {
             Rc::new(Exp::Num(123)),
             Rc::new(Exp::Num(234))
         )
-        .evaluate(),
-        Some(Exp::Num(234))
+        .evaluate()
+        .unwrap(),
+        Exp::Num(234)
     );
 }
 
 #[test]
+#[should_panic(expected = "Cannot evaluate a raw variable")]
 fn test_var() {
-    assert_eq!(Exp::Var("x").evaluate(), None);
+    Exp::Var("x").evaluate().unwrap();
 }
 
 #[test]
 fn test_let() {
     assert_eq!(
-        Exp::Let(None, Rc::new(Exp::Num(123)), "x", Rc::new(Exp::Var("x"))).evaluate(),
-        Some(Exp::Num(123))
+        Exp::Let(None, Rc::new(Exp::Num(123)), "x", Rc::new(Exp::Var("x")))
+            .evaluate()
+            .unwrap(),
+        Exp::Num(123)
     );
 }
 
 #[test]
 fn test_fun() {
     assert_eq!(
-        Exp::Fun(None, "x", Rc::new(Exp::Var("x"))).evaluate(),
-        Some(Exp::Fun(None, "x", Rc::new(Exp::Var("x"))))
+        Exp::Fun(None, "x", Rc::new(Exp::Var("x")))
+            .evaluate()
+            .unwrap(),
+        Exp::Fun(None, "x", Rc::new(Exp::Var("x")))
     );
 }
 
@@ -173,8 +205,9 @@ fn test_fix() {
             "f",
             Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f"))))
         )
-        .evaluate(),
-        Some(Exp::Fun(
+        .evaluate()
+        .unwrap(),
+        Exp::Fun(
             None,
             "x",
             Rc::new(Exp::Fix(
@@ -182,11 +215,11 @@ fn test_fix() {
                 "f",
                 Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f"))))
             ))
-        ))
+        )
     );
 }
 
 #[test]
 fn test_triv() {
-    assert_eq!(Exp::Triv.evaluate(), Some(Exp::Triv));
+    assert_eq!(Exp::Triv.evaluate().unwrap(), Exp::Triv);
 }
