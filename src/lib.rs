@@ -34,7 +34,7 @@ pub enum Exp {
     Var(&'static str),
     Let(Option<Typ>, Rc<Exp>, &'static str, Rc<Exp>),
     Fun(Option<Typ>, &'static str, Rc<Exp>),
-    Fix(Option<Typ>, &'static str, Rc<Exp>),
+    Fix(Option<Typ>, &'static str, Rc<Exp>, usize),
     Triv,
 }
 
@@ -84,7 +84,14 @@ impl Exp {
             }
             Exp::Var(_) => Err("Cannot evaluate a raw variable"),
             Exp::Let(_, e1, x, e2) => e2.substitute(e1, x).evaluate(),
-            Exp::Fix(_, x, e1) => e1.substitute(self, x).evaluate(),
+            Exp::Fix(t, x, e1, recurses_left) => {
+                if *recurses_left > 0 {
+                    let reduced_self = Exp::Fix(t.clone(), x, e1.clone(), recurses_left - 1);
+                    e1.substitute(&reduced_self, x).evaluate()
+                } else {
+                    Err("Fixed point ran out of recurses")
+                }
+            }
             Exp::Num(_) | Exp::Bool(_) | Exp::Fun(_, _, _) | Exp::Triv => Ok(self.clone()),
         }
     }
@@ -128,11 +135,16 @@ impl Exp {
                     Exp::Fun(t.clone(), x1, Rc::new(e1.substitute(sub, x)))
                 }
             }
-            Exp::Fix(t, x1, e1) => {
+            Exp::Fix(t, x1, e1, recurses_left) => {
                 if *x1 == x {
                     self.clone()
                 } else {
-                    Exp::Fix(t.clone(), x1, Rc::new(e1.substitute(sub, x)))
+                    Exp::Fix(
+                        t.clone(),
+                        x1,
+                        Rc::new(e1.substitute(sub, x)),
+                        *recurses_left,
+                    )
                 }
             }
             Exp::Num(_) | Exp::Bool(_) | Exp::Triv => self.clone(),

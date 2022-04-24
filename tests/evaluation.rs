@@ -229,6 +229,7 @@ fn test_fix() {
             None,
             "f",
             Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f")))),
+            1
         )
         .evaluate()
         .unwrap(),
@@ -239,6 +240,7 @@ fn test_fix() {
                 None,
                 "f",
                 Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f")))),
+                0
             ))
         )
     );
@@ -252,6 +254,7 @@ fn test_fix() {
                 Rc::new(Exp::Num(1)),
                 Rc::new(Exp::Num(2))
             )),
+            1
         )
         .evaluate()
         .unwrap(),

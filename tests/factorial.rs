@@ -39,6 +39,7 @@ fn test_factorial(n: i128) {
                 )),
             )),
         )),
+        0,
     );
 
     assert_eq!(
