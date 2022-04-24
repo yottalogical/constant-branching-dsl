@@ -180,20 +180,45 @@ fn test_var() {
 #[test]
 fn test_let() {
     assert_eq!(
-        Exp::Let(None, Rc::new(Exp::Num(123)), "x", Rc::new(Exp::Var("x")))
-            .evaluate()
-            .unwrap(),
-        Exp::Num(123)
+        Exp::Let(
+            None,
+            Rc::new(Exp::Num(123)),
+            "x",
+            Rc::new(Exp::BinOp(
+                BinOp::Plus,
+                Rc::new(Exp::Var("x")),
+                Rc::new(Exp::Var("x"))
+            ))
+        )
+        .evaluate()
+        .unwrap(),
+        Exp::Num(246)
     );
 }
 
 #[test]
 fn test_fun() {
     assert_eq!(
-        Exp::Fun(None, "x", Rc::new(Exp::Var("x")))
-            .evaluate()
-            .unwrap(),
-        Exp::Fun(None, "x", Rc::new(Exp::Var("x")))
+        Exp::Fun(
+            None,
+            "x",
+            Rc::new(Exp::BinOp(
+                BinOp::Plus,
+                Rc::new(Exp::Var("x")),
+                Rc::new(Exp::Var("x"))
+            ))
+        )
+        .evaluate()
+        .unwrap(),
+        Exp::Fun(
+            None,
+            "x",
+            Rc::new(Exp::BinOp(
+                BinOp::Plus,
+                Rc::new(Exp::Var("x")),
+                Rc::new(Exp::Var("x"))
+            ))
+        )
     );
 }
 
@@ -203,7 +228,7 @@ fn test_fix() {
         Exp::Fix(
             None,
             "f",
-            Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f"))))
+            Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f")))),
         )
         .evaluate()
         .unwrap(),
@@ -213,9 +238,24 @@ fn test_fix() {
             Rc::new(Exp::Fix(
                 None,
                 "f",
-                Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f"))))
+                Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f")))),
             ))
         )
+    );
+
+    assert_eq!(
+        Exp::Fix(
+            None,
+            "f",
+            Rc::new(Exp::BinOp(
+                BinOp::Plus,
+                Rc::new(Exp::Num(1)),
+                Rc::new(Exp::Num(2))
+            )),
+        )
+        .evaluate()
+        .unwrap(),
+        Exp::Num(3)
     );
 }
 
