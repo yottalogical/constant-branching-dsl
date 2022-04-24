@@ -39,7 +39,8 @@ fn test_factorial(n: i128) {
                 )),
             )),
         )),
-        0,
+        34,
+        Rc::new(Exp::Num(0)),
     );
 
     assert_eq!(
@@ -73,4 +74,9 @@ fn test_3() {
 #[test]
 fn test_4() {
     test_factorial(4);
+}
+
+#[test]
+fn test_33() {
+    test_factorial(33);
 }

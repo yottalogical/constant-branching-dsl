@@ -173,10 +173,7 @@ fn test_if_false() {
 
 #[test]
 fn test_var() {
-    assert_eq!(
-        Exp::Var("x").evaluate().unwrap_err(),
-        EvaluationErr::UnassignedVar
-    );
+    Exp::Var("x").evaluate().unwrap_err();
 }
 
 #[test]
@@ -231,7 +228,8 @@ fn test_fix() {
             None,
             "f",
             Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f")))),
-            1
+            1,
+            Rc::new(Exp::Fun(None, "", Rc::new(Exp::Triv)))
         )
         .evaluate()
         .unwrap(),
@@ -242,7 +240,8 @@ fn test_fix() {
                 None,
                 "f",
                 Rc::new(Exp::Fun(None, "x", Rc::new(Exp::Var("f")))),
-                0
+                0,
+                Rc::new(Exp::Fun(None, "", Rc::new(Exp::Triv)))
             ))
         )
     );
@@ -256,7 +255,8 @@ fn test_fix() {
                 Rc::new(Exp::Num(1)),
                 Rc::new(Exp::Num(2))
             )),
-            1
+            1,
+            Rc::new(Exp::Num(0))
         )
         .evaluate()
         .unwrap(),
