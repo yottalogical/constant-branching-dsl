@@ -21,6 +21,8 @@ pub enum BinOp {
     Plus,
     Minus,
     Times,
+    Div,
+    Mod,
     Ap,
 }
 
@@ -69,6 +71,8 @@ impl Exp {
                         BinOp::Plus => (Exp::Num(n1 + n2), valid),
                         BinOp::Minus => (Exp::Num(n1 - n2), valid),
                         BinOp::Times => (Exp::Num(n1 * n2), valid),
+                        BinOp::Div => (Exp::Num(n1 / n2), valid),
+                        BinOp::Mod => (Exp::Num(n1 % n2), valid),
                         BinOp::Ap => (Exp::Num(0), false),
                     }
                 }
